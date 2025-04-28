@@ -113,7 +113,6 @@ class Game():
         self.triangle_hitbox_rect = self.triangle_hitbox.get_rect(bottomleft= (x+35,y-4))
         self.hitboxes.append(self.triangle_hitbox_rect)
         self.screen.blit(self.triangle,self.triangle_rect)
-        self.screen.blit(self.triangle_hitbox,self.triangle_hitbox_rect)
 
     def main_screen(self):
         ...

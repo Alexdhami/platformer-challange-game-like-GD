@@ -24,7 +24,7 @@ This is a basic 2D platformer game created using the Pygame library in Python. T
         ```bash
         pip install pyautogui
          ```
-2.  **Download the Code:** Download the `main.py` file (or any other relevant Python files and the `triangle.png` image) from this repository.
+2.  **Download the Code:** Download the `main.py` file (or any other relevant Python files and the `assets/triangle.png` image) from this repository.
 3.  **Run the Game:** Open your terminal or command prompt, navigate to the directory where you saved the files, and run the game using:
     ```bash
     python main.py
@@ -40,7 +40,8 @@ This is a basic 2D platformer game created using the Pygame library in Python. T
 
 ## Game Assets
 
-* `triangle.png`: Image file for the triangle spike obstacle.
-* `Pixeltype.ttf`: Font file used for displaying the score and death count.
+* `assets/triangle.png`: Image file for the triangle spike obstacle.
+* `assets/font/Pixeltype.ttf`: Font file used for displaying the score and death count.
+* `assets/music/collision.wav`: Sound used for colliding with obstacles.
 
-**Note:** Make sure these asset files are in the same directory as your `main.py` file.
+**Note:** Make sure this asset folder is in the same directory as your `main.py` file.

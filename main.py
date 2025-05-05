@@ -1,22 +1,26 @@
 import pygame
+from pyautogui import size
 from pygame import Vector2
 pygame.init()
+pygame.mixer.init()
+WIDTH, HEIGHT = size()
+# WIDTH = 1900
+HEIGHT = HEIGHT-100
 
-SIZE = WIDTH, HEIGHT = 1400,900
-WIN = pygame.display.set_mode(SIZE)
+WIN = pygame.display.set_mode((WIDTH,HEIGHT))
 CLOCK = pygame.time.Clock()
-
+pygame.mouse.set_visible(False)
 class Game():
     def __init__(self,screen,width,height):
         self.screen = screen
         self.width = width
         self.height = height
         self.x = 0
-        self.y = 800
+        self.y = self.height -100
         # self.speed = 850
         self.level = 1
         # Scoring
-        self.font = pygame.font.Font('Pixeltype.ttf',size = 30)
+        self.font = pygame.font.Font('assets/font/Pixeltype.ttf',size = 60)
         self.death_count = 0
 
         self.onground = True
@@ -43,7 +47,7 @@ class Game():
 
 
         #Trianlge
-        self.triangle = pygame.transform.scale(pygame.image.load('triangle.png'),(130,120))
+        self.triangle = pygame.transform.scale(pygame.image.load('assets/triangle.png'),(130,120))
 
         # Cube
         self.cube = pygame.Surface((80,80))
@@ -52,7 +56,10 @@ class Game():
 
         # Ground
         self.ground = pygame.Surface((self.width,100))
-        self.ground_rect = self.ground.get_rect(topleft = (0,800))
+        self.ground_rect = self.ground.get_rect(topleft = (0,self.height-100))
+
+        #collision sound
+        self.sound = pygame.mixer.Sound('assets/music/collision.wav')
 
     def draw_score(self):
         score_font = self.font.render(f'Room: {self.level}',False,'Green')
@@ -81,7 +88,7 @@ class Game():
                     # self.hitboxes.clear()
                     self.level += 1
                     self.x = 0
-                    self.y = 800
+                    self.y = self.height - 100
 
 
             elif keys[pygame.K_a]:
@@ -109,18 +116,17 @@ class Game():
 
     def draw_triangles(self,x,y):
         # y position should be 804 for  
-        self.triangle_rect = self.triangle.get_rect(bottomleft = (x,y))
-        self.triangle_hitbox_rect = self.triangle_hitbox.get_rect(bottomleft= (x+35,y-4))
+        self.triangle_rect = self.triangle.get_rect(bottomleft = (x,self.height-96))
+        self.triangle_hitbox_rect = self.triangle_hitbox.get_rect(bottomleft= (x+35,self.height-100))
         self.hitboxes.append(self.triangle_hitbox_rect)
         self.screen.blit(self.triangle,self.triangle_rect)
+        # self.screen.blit(self.triangle_hitbox,self.triangle_hitbox_rect)
 
-    def main_screen(self):
-        ...
-    
     def collision(self):
         if self.triangle_hitbox_rect:
             for hitbox in self.hitboxes:
                 if self.cube_rect.colliderect(hitbox):
+                    self.sound.play()
                     self.hitboxes.clear()
                     self.x = 0
                     self.screen.fill('black')
@@ -133,10 +139,9 @@ class Game():
                 if self.cube_rect.top < object.bottom:
                     self.gravity.y = - self.gravity.y
                     self.object_list.clear()
-                
                
     def objects(self,width,height,x,y):
-        self.object = pygame.Surface((width,height))
+        self.object = pygame.Surface((self.width,self.height))
         self.object.fill('black')
         self.object_rect = self.object.get_rect(bottomleft = (x,y))
         self.object_list.append(self.object_rect)
@@ -160,7 +165,7 @@ class Game():
         self.screen.blit(self.ground,self.ground_rect)
         
         # Triangle
-        self.draw_triangles(700,804)
+        self.draw_triangles(((self.width/2)+300)-self.width/4,804)
        
         # Cube
         self.screen.blit(self.cube,self.cube_rect)
@@ -174,8 +179,8 @@ class Game():
         self.screen.blit(self.ground,self.ground_rect)
         
         # Triangle
-        self.draw_triangles(700,804)
-        self.draw_triangles(600,804)
+        self.draw_triangles(((self.width/2)+200)-self.width/4,804)
+        self.draw_triangles(((self.width/2)+300)-self.width/4,804)
         
         # Cube
         self.screen.blit(self.cube,self.cube_rect)   
@@ -190,10 +195,12 @@ class Game():
         
         # Cube
         self.screen.blit(self.cube,self.cube_rect)
-        # Triangle
-        self.draw_triangles(700,804)
-        self.draw_triangles(600,804)
-        self.draw_triangles(800,804)
+        # # Triangle
+
+        self.draw_triangles((self.width/2)+200-self.width/4,804)
+        self.draw_triangles(((self.width/2)+400)-self.width/4,804)
+
+        self.draw_triangles(((self.width/2)+300)-self.width/4,804)
 
     def level5(self): # 2x2 spikes
         # Screen
@@ -207,10 +214,12 @@ class Game():
         self.screen.blit(self.cube,self.cube_rect)
 
         # Triangle
-        self.draw_triangles(700,804)
-        self.draw_triangles(600,804)
-        self.draw_triangles(800,804)
-        self.draw_triangles(900,804)
+
+        self.draw_triangles((self.width/2)+400-self.width/4,804)
+        self.draw_triangles(((self.width/2)+100)-self.width/4,804)
+
+        self.draw_triangles(((self.width/2)+200)-self.width/4,804)
+        self.draw_triangles(((self.width/2)+300)-self.width/4,804)
 
     def level6(self):# medium 4 spikes
         # Screen
@@ -223,11 +232,20 @@ class Game():
         # Cube
         self.screen.blit(self.cube,self.cube_rect)
 
-        # Triangle
-        self.draw_triangles(200,804)
-        self.draw_triangles(500,804)
-        self.draw_triangles(800,804)
-        self.draw_triangles(1100,804)
+        # # Triangle
+        # self.draw_triangles(200,804)
+        # self.draw_triangles(500,804)
+
+        # self.draw_triangles(800,804)
+        # self.draw_triangles(1100,804)
+
+        self.draw_triangles((self.width/2)-200-self.width/4,804)
+        self.draw_triangles(((self.width/2)+100)-self.width/4,804)
+
+        self.draw_triangles(((self.width/2)+700)-self.width/4,804)
+        self.draw_triangles(((self.width/2)+400)-self.width/4,804)
+
+        self.draw_triangles(((self.width/2)+1000)-self.width/4,804)
 
     def level7(self): # 2x2x2x2 spikes normal
         # Screen
@@ -241,17 +259,18 @@ class Game():
         self.screen.blit(self.cube,self.cube_rect)
 
         # Triangle
-        self.draw_triangles(200,804)
-        self.draw_triangles(310,804)
 
-        self.draw_triangles(500,804)
-        self.draw_triangles(610,804)
+        self.draw_triangles((self.width/2)-200-self.width/4,804)
+        self.draw_triangles(((self.width/2)-90)-self.width/4,804)
 
-        self.draw_triangles(800,804)
-        self.draw_triangles(910,804)
+        self.draw_triangles(((self.width/2)+185)-self.width/4,804)
+        self.draw_triangles(((self.width/2)+295)-self.width/4,804)
 
-        self.draw_triangles(1100,804)
-        self.draw_triangles(1210,804)
+        self.draw_triangles((self.width/2)+485-self.width/4,804)
+        self.draw_triangles(((self.width/2)+595)-self.width/4,804)
+
+        self.draw_triangles(((self.width/2)+785)-self.width/4,804)
+        self.draw_triangles(((self.width/2)+895)-self.width/4,804)
 
     def level8(self): #Hard 4 spikes x2
         # Screen
@@ -265,15 +284,20 @@ class Game():
         self.screen.blit(self.cube,self.cube_rect)
 
         # Triangle
-        self.draw_triangles(200,804)
-        self.draw_triangles(300,804)
-        self.draw_triangles(400,804)
-        self.draw_triangles(505,804)
+        # self.draw_triangles(200,804)
+        # self.draw_triangles(300,804)
+        # self.draw_triangles(400,804)
+        # self.draw_triangles(505,804)
 
-        self.draw_triangles(800,804)
-        self.draw_triangles(900,804)
-        self.draw_triangles(1000,804)
-        self.draw_triangles(1105,804)
+        self.draw_triangles((self.width/2)-200-self.width/4,804)
+        self.draw_triangles(((self.width/2)-100)-self.width/4,804)
+        self.draw_triangles(((self.width/2))-self.width/4,804)
+        self.draw_triangles(((self.width/2)+100)-self.width/4,804)
+
+        self.draw_triangles((self.width/2)+395-self.width/4,804)
+        self.draw_triangles(((self.width/2)+495)-self.width/4,804)
+        self.draw_triangles(((self.width/2)+595)-self.width/4,804)
+        self.draw_triangles(((self.width/2)+700)-self.width/4,804)
 
     def level9(self): # Hard
         # Screen
@@ -287,21 +311,21 @@ class Game():
         self.screen.blit(self.cube,self.cube_rect)
 
         # Triangle
-        self.draw_triangles(100,804)
-        self.draw_triangles(200,804)
-        self.draw_triangles(300,804)
 
-        self.draw_triangles(500,804)
+        self.draw_triangles((self.width/2)-200-self.width/4,804)
+        self.draw_triangles(((self.width/2)-100)-self.width/4,804)
+        self.draw_triangles(((self.width/2))-self.width/4,804)
 
-        self.draw_triangles(600,804)
 
-        self.draw_triangles(800,804)
-        self.draw_triangles(890,804)
+        self.draw_triangles((self.width/2)+200-self.width/4,804)
+        self.draw_triangles(((self.width/2)+300)-self.width/4,804)
 
-        self.draw_triangles(980,804)
-        self.draw_triangles(1080,804)
+        self.draw_triangles((self.width/2)+500-self.width/4,804)
+        self.draw_triangles(((self.width/2)+590)-self.width/4,804)
+        self.draw_triangles(((self.width/2)+680)-self.width/4,804)
+        self.draw_triangles(((self.width/2)+790)-self.width/4,804)
 
-        self.draw_triangles(1300,804)
+        self.draw_triangles((self.width/2)+1010-self.width/4,804)
 
     def level10(self):
         # Screen
@@ -315,22 +339,27 @@ class Game():
         self.screen.blit(self.cube,self.cube_rect)
 
         # Triangle
-        self.draw_triangles(100,804)
-        self.draw_triangles(200,804)
-        self.draw_triangles(300,804)
+        # self.draw_triangles((self.width/2)-self.width/4,804)
+        # self.draw_triangles(200,804)
+        # self.draw_triangles(300,804)
 
-        self.draw_triangles(500,804)
-        self.draw_triangles(600,804)
-        self.draw_triangles(700,804)
+        self.draw_triangles((self.width/2)-200-self.width/4,804)
+        self.draw_triangles(((self.width/2)-100)-self.width/4,804)
+        self.draw_triangles(((self.width/2))-self.width/4,804)
+
+        self.draw_triangles((self.width/2)+200-self.width/4,804)
+        self.draw_triangles(((self.width/2)+300)-self.width/4,804)
+        self.draw_triangles(((self.width/2)+400)-self.width/4,804)
 
 
-        # self.draw_triangles(1100,804)
-        # self.draw_triangles(1200,804)
+        self.draw_triangles((self.width/2)+600-self.width/4,804)
+        self.draw_triangles(((self.width/2)+700)-self.width/4,804)
 
-        self.draw_triangles(900,804)
-        self.draw_triangles(998,804)
-        self.draw_triangles(1096,804)
-        self.draw_triangles(1195,804)
+
+        self.draw_triangles((self.width/2)+900-self.width/4,804)
+        self.draw_triangles(((self.width/2)+998)-self.width/4,804)
+        self.draw_triangles(((self.width/2)+1096)-self.width/4,804)
+        self.draw_triangles((self.width/2)+1195-self.width/4,804)
 
     def level11(self):
         # Screen
@@ -341,14 +370,14 @@ class Game():
         self.screen.blit(self.ground,self.ground_rect)
         
         # Triangle
-        self.draw_triangles(700,804)
+        self.draw_triangles((self.width)/2,804)
 
        
         # Cube
         self.screen.blit(self.cube,self.cube_rect)
 
         #Object
-        self.objects(1400,100,0,550)
+        self.objects(1400,100,0,self.height - 380)
 
     def level12(self):
         # Screen
@@ -359,14 +388,14 @@ class Game():
         self.screen.blit(self.ground,self.ground_rect)
         
         # Triangle
-        self.draw_triangles(700,804)
+        self.draw_triangles((self.width)/2,804)
 
        
         # Cube
         self.screen.blit(self.cube,self.cube_rect)
 
         #Object
-        self.objects(1400,100,0,570)
+        self.objects(1400,100,0,self.height - 350)
 
     def level13(self):
         # Screen
@@ -377,7 +406,7 @@ class Game():
         self.screen.blit(self.ground,self.ground_rect)
         
         # Triangle
-        self.draw_triangles(700,804)
+        self.draw_triangles((self.width)/2,804)
         
 
        
@@ -385,7 +414,7 @@ class Game():
         self.screen.blit(self.cube,self.cube_rect)
 
         #Object
-        self.objects(1400,100,0,585)
+        self.objects(1400,100,0,self.height - 338)
 
     def level14(self):
         # Screen
@@ -396,14 +425,14 @@ class Game():
         self.screen.blit(self.ground,self.ground_rect)
         
         # Triangle
-        self.draw_triangles(700,804)
-        self.draw_triangles(800,804)
+        self.draw_triangles(self.width/2,804)
+        self.draw_triangles((self.width/2)+100,804)
 
         # Cube
         self.screen.blit(self.cube,self.cube_rect)
 
         #Object
-        self.objects(1400,100,0,500)
+        self.objects(1400,100,0,self.height-400)
 
     def level15(self):
         # Screen
@@ -414,14 +443,14 @@ class Game():
         self.screen.blit(self.ground,self.ground_rect)
         
         # Triangle
-        self.draw_triangles(700,804)
-        self.draw_triangles(800,804)
+        self.draw_triangles((self.width/2),804)
+        self.draw_triangles((self.width/2)+100,804)
        
         # Cube
         self.screen.blit(self.cube,self.cube_rect)
 
         #Object
-        self.objects(1400,100,0,525)
+        self.objects(1400,100,0,self.height - 390)
 
     def level16(self):
         # Screen
@@ -432,16 +461,18 @@ class Game():
         self.screen.blit(self.ground,self.ground_rect)
         
         # Triangle
-        self.draw_triangles(700,804)
-        self.draw_triangles(800,804)
-        self.draw_triangles(600,804)
+        self.draw_triangles((self.width/2)+100,804)
+        self.draw_triangles((self.width/2)+200,804)
+        self.draw_triangles((self.width/2),804)
 
         # Cube
         self.screen.blit(self.cube,self.cube_rect)
 
         #Object
-        self.objects(1400,100,0,485)
+        self.objects(1400,100,0,self.height-426)
 
+    def win_screen(self):
+        image = pygame.image.load('')
 game = Game(WIN,WIDTH,HEIGHT)
 
 def levels():
@@ -479,6 +510,10 @@ def levels():
         game.level15()
     if game.level ==16:
         game.level16()
+
+    if game.level >16:
+        game.win_screen()
+
 while True:
     dt = CLOCK.tick(60) / 1000
     for event in pygame.event.get():
@@ -500,6 +535,4 @@ while True:
     game.draw_score()
     game.collision()
 
-    # game.screen.blit(game.score_font,(10,10))
-    
     pygame.display.update()

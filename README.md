@@ -20,6 +20,10 @@ This is a basic 2D platformer game created using the Pygame library in Python. T
         ```bash
         pip install pygame
         ```
+    * Pyautogui Tool.
+        ```bash
+        pip install pyautogui
+         ```
 2.  **Download the Code:** Download the `main.py` file (or any other relevant Python files and the `triangle.png` image) from this repository.
 3.  **Run the Game:** Open your terminal or command prompt, navigate to the directory where you saved the files, and run the game using:
     ```bash
